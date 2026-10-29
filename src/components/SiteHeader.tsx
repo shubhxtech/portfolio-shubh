@@ -44,7 +44,10 @@ export function SiteHeader() {
       }`}
     >
       <div className="mx-auto flex h-14 max-w-[1180px] items-center justify-between gap-6 px-5 sm:px-8">
-        <a href="#top" className="group flex items-center gap-2.5 font-display text-[16px] font-medium tracking-[-0.01em] text-fg">
+        <a
+          href="#top"
+          className="group flex shrink-0 items-center gap-2.5 font-display text-[16px] font-medium tracking-[-0.01em] whitespace-nowrap text-fg"
+        >
           <span
             aria-hidden
             className="grid size-6 place-items-center rounded-[3px] border border-accent/50 font-mono text-[10.5px] text-accent transition-colors group-hover:bg-accent group-hover:text-bg"
@@ -53,7 +56,7 @@ export function SiteHeader() {
           </span>
           {site.name}
         </a>
-        <nav aria-label="Sections" className="flex items-center gap-4 font-mono text-[12.5px] sm:gap-6">
+        <nav aria-label="Sections" className="flex items-center gap-3 font-mono text-[12px] min-[400px]:gap-4 sm:gap-6 sm:text-[12.5px]">
           {nav.map((n) => (
             <a
               key={n.id}

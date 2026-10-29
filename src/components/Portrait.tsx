@@ -3,7 +3,7 @@ import { site } from "@/content/site";
 
 export function Portrait() {
   return (
-    <figure className="panel w-40 sm:w-48 md:w-full">
+    <figure className="panel mx-auto w-48 sm:w-52 md:mx-0 md:w-full">
       <div className="hidden items-center justify-between gap-3 border-b border-line px-4 py-2.5 md:flex">
         <p className="kicker truncate !text-fg-2">{site.name}</p>
         <p className="kicker hidden lg:block">{site.location}</p>
