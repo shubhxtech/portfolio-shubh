@@ -17,6 +17,7 @@ const personJsonLd = {
   name: site.name,
   jobTitle: site.role,
   email: `mailto:${site.email}`,
+  ...(site.url ? { url: site.url, image: `${site.url}${site.shareImage}` } : {}),
   alumniOf: { "@type": "CollegeOrUniversity", name: "Indian Institute of Technology Mandi" },
   sameAs: [site.links.github, site.links.linkedin, site.links.leetcode, site.links.codeforces, site.links.codechef],
 };

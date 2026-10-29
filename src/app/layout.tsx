@@ -37,6 +37,7 @@ export const metadata: Metadata = {
     siteName: site.name,
     firstName: "Shubh",
     lastName: "Sahu",
+    images: [{ url: site.shareImage, width: site.photo.width, height: site.photo.height, alt: `Portrait of ${site.name}` }],
   },
   twitter: { card: "summary", title, description: site.description },
 };

@@ -1,13 +1,15 @@
 export const site = {
   name: "Shubh Sahu",
   role: "Software engineer",
-  // Set this once the site has a domain; it enables absolute Open Graph URLs and the canonical link.
-  url: undefined as string | undefined,
+  // Enables absolute Open Graph URLs and the canonical link; update it if you add a custom domain.
+  url: "https://portfolio-shubh-dun.vercel.app" as string | undefined,
   description:
     "Shubh Sahu is a computer science student at IIT Mandi (class of 2027) who builds backend and distributed systems. Previously a software engineering intern at Google.",
   email: "shubhxtech@gmail.com",
   resume: "/Shubh_Sahu_Resume.pdf",
   photo: { src: "/shubh-sahu.webp", width: 662, height: 740 },
+  // JPEG copy of the photo for link previews; some platforms (e.g. LinkedIn) don't accept WebP.
+  shareImage: "/og-shubh-sahu.jpg",
   location: "Mandi, India",
   links: {
     github: "https://github.com/shubhxtech",
