@@ -1,12 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Newsreader } from "next/font/google";
+import { Geist, IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import { site } from "@/content/site";
 import "./globals.css";
 
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
-  axes: ["opsz"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+const geist = Geist({
+  variable: "--font-geist",
+  subsets: ["latin"],
   display: "swap",
 });
 
@@ -36,14 +42,18 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f5f3ee",
-  colorScheme: "light",
+  themeColor: "#0a0f1a",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${newsreader.variable} ${plexMono.variable}`}>
-      <body>{children}</body>
+    <html lang="en" className={`${spaceGrotesk.variable} ${geist.variable} ${plexMono.variable}`}>
+      <body className="relative">
+        <div aria-hidden className="bp-grid" />
+        <div aria-hidden className="bp-haze" />
+        {children}
+      </body>
     </html>
   );
 }

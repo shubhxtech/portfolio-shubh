@@ -1,26 +1,23 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #f5f3ee;
-  --color-paper-2: #ebe8e0;
-  --color-paper-3: #e2ded4;
-  --color-ink: #17160f;
-  --color-ink-2: #46433b;
-  --color-ink-3: #69655c;
-  --color-rule: #d6d1c6;
-  --color-rule-strong: #b9b3a6;
-  --color-signal: #b8401b;
-  --color-signal-soft: #f1ddd2;
-  --color-node-1: #17160f;
-  --color-node-2: #b8401b;
-  --color-node-3: #2c6762;
+  --color-bg: #0a0f1a;
+  --color-surface: #0d1422;
+  --color-raised: #121b2d;
+  --color-line: #1b2740;
+  --color-line-strong: #2b3b5a;
+  --color-fg: #e6edf7;
+  --color-fg-2: #a7b4c8;
+  --color-fg-3: #7386a2;
+  --color-accent: #5cc8ff;
+  --color-hi: #ffb547;
+  --color-node-1: #5cc8ff;
+  --color-node-2: #6ee7b7;
+  --color-node-3: #f78da7;
 
-  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
-
-  --text-meta: 0.75rem;
-  --text-meta--line-height: 1.5;
-  --text-meta--letter-spacing: 0.02em;
 
   --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -29,27 +26,27 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 5rem;
+    color-scheme: dark;
     -webkit-text-size-adjust: 100%;
-    text-rendering: optimizeLegibility;
   }
 
   body {
-    background: var(--color-paper);
-    color: var(--color-ink);
-    font-family: var(--font-serif);
-    font-size: 1.125rem;
-    line-height: 1.6;
-    font-optical-sizing: auto;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   ::selection {
-    background: var(--color-signal-soft);
-    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+    color: var(--color-fg);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-signal);
+    outline: 2px solid var(--color-accent);
     outline-offset: 3px;
     border-radius: 2px;
   }
@@ -62,23 +59,85 @@
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
   }
 }
 
 @layer components {
+  /* Drafting grid: minor 24px lines, major every 120px, fading out down the page. */
+  .bp-grid {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgb(92 200 255 / 0.055) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(92 200 255 / 0.055) 1px, transparent 1px),
+      linear-gradient(to right, rgb(92 200 255 / 0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(92 200 255 / 0.025) 1px, transparent 1px);
+    background-size:
+      120px 120px,
+      120px 120px,
+      24px 24px,
+      24px 24px;
+    background-position: center top;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 30%, transparent 100%);
+  }
+  .bp-haze {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 720px;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(ellipse 60% 55% at 70% 20%, rgb(92 200 255 / 0.07), transparent 70%);
+  }
+
+  /* Panel with blueprint crop marks on two corners. */
+  .panel {
+    position: relative;
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    border: 1px solid var(--color-line);
+    border-radius: 4px;
+  }
+  .panel::before,
+  .panel::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-color: var(--color-accent);
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .panel::before {
+    top: -1px;
+    left: -1px;
+    border-top: 1px solid;
+    border-left: 1px solid;
+    border-top-left-radius: 4px;
+  }
+  .panel::after {
+    right: -1px;
+    bottom: -1px;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-bottom-right-radius: 4px;
+  }
+
   .link {
     color: inherit;
     text-decoration-line: underline;
-    text-decoration-color: var(--color-rule-strong);
+    text-decoration-color: var(--color-line-strong);
     text-decoration-thickness: 1px;
-    text-underline-offset: 0.22em;
+    text-underline-offset: 0.25em;
     transition: text-decoration-color 160ms var(--ease-out-soft), color 160ms var(--ease-out-soft);
   }
   .link:hover {
-    text-decoration-color: var(--color-signal);
-    color: var(--color-ink);
+    text-decoration-color: var(--color-accent);
+    color: var(--color-fg);
   }
 
   .arrow {
@@ -92,12 +151,25 @@
     transform: translateY(2px);
   }
 
-  .meta {
+  .kicker {
     font-family: var(--font-mono);
-    font-size: var(--text-meta);
-    line-height: var(--text-meta--line-height);
-    letter-spacing: var(--text-meta--letter-spacing);
-    color: var(--color-ink-3);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-fg-3);
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-line);
+    background: var(--color-surface);
+    border-radius: 3px;
+    padding: 0.2rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.4;
+    color: var(--color-fg-2);
   }
 
   .prose-body > p + p {
@@ -107,8 +179,8 @@
   /* Content is visible without JS; the reveal only applies once the observer has armed it. */
   .reveal-armed [data-reveal] {
     opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 600ms var(--ease-out-soft), transform 600ms var(--ease-out-soft);
+    transform: translateY(12px);
+    transition: opacity 650ms var(--ease-out-soft), transform 650ms var(--ease-out-soft);
   }
   .reveal-armed [data-reveal].is-in {
     opacity: 1;

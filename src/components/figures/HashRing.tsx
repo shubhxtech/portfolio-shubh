@@ -2,32 +2,12 @@
 
 import { useId, useMemo, useState } from "react";
 import { buildRing, NODE_IDS, ownership, route, type NodeId } from "@/lib/ring";
+import { arcPath, nodeColor, point } from "./ringGeometry";
 
 const SIZE = 320;
 const C = SIZE / 2;
 const R = 124;
 const SAMPLE_KEYS = ["user:1", "order:1042", "session:7f3a"];
-
-const nodeColor: Record<NodeId, string> = {
-  "node-1": "var(--color-node-1)",
-  "node-2": "var(--color-node-2)",
-  "node-3": "var(--color-node-3)",
-};
-
-// Rounded so server and browser trig results serialize identically during hydration.
-const round = (n: number) => Math.round(n * 100) / 100;
-
-function point(fraction: number, radius: number) {
-  const a = fraction * 2 * Math.PI - Math.PI / 2;
-  return [round(C + radius * Math.cos(a)), round(C + radius * Math.sin(a))] as const;
-}
-
-function arcPath(from: number, to: number) {
-  const span = (to - from + 1) % 1;
-  const [x1, y1] = point(from, R);
-  const [x2, y2] = point(to, R);
-  return `M ${x1} ${y1} A ${R} ${R} 0 ${span > 0.5 ? 1 : 0} 1 ${x2} ${y2}`;
-}
 
 export function HashRing() {
   const ring = useMemo(() => buildRing(), []);
@@ -47,21 +27,22 @@ export function HashRing() {
     });
 
   const owner = r.vnode;
-  const [kx, ky] = point(r.keyFraction, R);
+  const [kx, ky] = point(C, r.keyFraction, R);
 
   return (
-    <div className="grid gap-8 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)] md:gap-10">
+    <div className="grid gap-8 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)] md:gap-12">
       <svg
         viewBox={`0 0 ${SIZE} ${SIZE}`}
         className="mx-auto w-full max-w-[320px]"
         role="img"
         aria-label={`Hash ring with ${ring.length} virtual nodes. Key "${key}" routes to ${owner ? owner.node : "no node"}.`}
       >
-        <circle cx={C} cy={C} r={R} fill="none" stroke="var(--color-rule)" strokeWidth={1} />
+        <circle cx={C} cy={C} r={R - 24} fill="none" stroke="var(--color-line)" strokeDasharray="2 4" />
+        <circle cx={C} cy={C} r={R} fill="none" stroke="var(--color-line-strong)" />
         {ring.map((v) => {
           const isOwner = owner === v;
-          const [x1, y1] = point(v.fraction, R - (isOwner ? 10 : 4));
-          const [x2, y2] = point(v.fraction, R + (isOwner ? 14 : 6));
+          const [x1, y1] = point(C, v.fraction, R - (isOwner ? 10 : 4));
+          const [x2, y2] = point(C, v.fraction, R + (isOwner ? 14 : 6));
           return (
             <line
               key={v.hash}
@@ -72,58 +53,63 @@ export function HashRing() {
               stroke={nodeColor[v.node]}
               strokeWidth={isOwner ? 2.5 : 1}
               strokeLinecap="round"
-              opacity={down.has(v.node) ? 0.12 : isOwner ? 1 : 0.55}
+              opacity={down.has(v.node) ? 0.1 : isOwner ? 1 : 0.55}
               style={{ transition: "opacity 200ms" }}
             />
           );
         })}
         {owner && (
           <path
-            d={arcPath(r.keyFraction, owner.fraction)}
+            d={arcPath(C, R, r.keyFraction, owner.fraction)}
             fill="none"
-            stroke="var(--color-signal)"
+            stroke="var(--color-hi)"
             strokeWidth={3}
             strokeLinecap="round"
           />
         )}
-        <circle cx={kx} cy={ky} r={5} fill="var(--color-paper)" stroke="var(--color-ink)" strokeWidth={1.75} />
-        <text x={C} y={C - 10} textAnchor="middle" className="fill-ink-3 font-mono text-[10px] tracking-wider">
+        <circle cx={kx} cy={ky} r={5} fill="var(--color-bg)" stroke="var(--color-hi)" strokeWidth={2} />
+        <text x={C} y={C - 12} textAnchor="middle" className="fill-fg-3 font-mono text-[10px] tracking-[0.14em]">
           ROUTED TO
         </text>
         <text
           x={C}
-          y={C + 14}
+          y={C + 13}
           textAnchor="middle"
-          className="font-mono text-[20px]"
-          fill={owner ? nodeColor[owner.node] : "var(--color-signal)"}
+          className="font-display text-[24px] font-medium"
+          fill={owner ? nodeColor[owner.node] : "var(--color-hi)"}
         >
           {owner ? owner.node : "none"}
         </text>
-        <text x={C} y={C + 32} textAnchor="middle" className="fill-ink-3 font-mono text-[10px]">
+        <text x={C} y={C + 32} textAnchor="middle" className="fill-fg-3 font-mono text-[10px]">
           {owner ? `vnode #${owner.index}` : "all nodes down"}
         </text>
       </svg>
 
       <div className="min-w-0 font-mono text-[13px] leading-relaxed">
-        <label htmlFor={inputId} className="meta block">
+        <label htmlFor={inputId} className="kicker block">
           Key
         </label>
-        <input
-          id={inputId}
-          value={key}
-          onChange={(e) => setKey(e.target.value)}
-          spellCheck={false}
-          autoComplete="off"
-          className="mt-1.5 w-full border-b border-rule-strong bg-transparent py-1.5 text-[16px] text-ink outline-none transition-colors focus:border-ink"
-        />
-        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-ink-3">
+        <div className="mt-2 flex items-center gap-2 rounded-[3px] border border-line-strong bg-raised px-3 transition-colors focus-within:border-accent">
+          <span aria-hidden className="text-accent">
+            $
+          </span>
+          <input
+            id={inputId}
+            value={key}
+            onChange={(e) => setKey(e.target.value)}
+            spellCheck={false}
+            autoComplete="off"
+            className="w-full bg-transparent py-2 text-[16px] text-fg outline-none"
+          />
+        </div>
+        <div className="mt-2.5 flex flex-wrap gap-x-3 gap-y-1 text-fg-3">
           <span>try</span>
           {SAMPLE_KEYS.map((k) => (
             <button
               key={k}
               type="button"
               onClick={() => setKey(k)}
-              className="underline decoration-rule-strong underline-offset-4 transition-colors hover:text-ink hover:decoration-signal"
+              className="underline decoration-line-strong underline-offset-4 transition-colors hover:text-fg hover:decoration-accent"
             >
               {k}
             </button>
@@ -131,27 +117,27 @@ export function HashRing() {
         </div>
 
         <dl className="mt-6 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2" aria-live="polite">
-          <dt className="text-ink-3">md5</dt>
-          <dd className="break-all text-ink">{r.keyHash}</dd>
-          <dt className="text-ink-3">position</dt>
-          <dd className="text-ink">{r.keyFraction.toFixed(4)} of the ring</dd>
-          <dt className="text-ink-3">owner</dt>
-          <dd className="text-ink">
+          <dt className="text-fg-3">md5</dt>
+          <dd className="break-all text-fg">{r.keyHash}</dd>
+          <dt className="text-fg-3">position</dt>
+          <dd className="text-fg">{r.keyFraction.toFixed(4)} of the ring</dd>
+          <dt className="text-fg-3">owner</dt>
+          <dd className="text-fg">
             {owner ? (
               <>
                 <span style={{ color: nodeColor[owner.node] }}>
                   {owner.node}#{owner.index}
                 </span>
-                <span className="text-ink-3">{r.wrapped ? " — wrapped past the top" : " — next live vnode clockwise"}</span>
+                <span className="text-fg-3">{r.wrapped ? " — wrapped past the top" : " — next live vnode clockwise"}</span>
               </>
             ) : (
-              <span className="text-signal">no live node — the coordinator rejects the request</span>
+              <span className="text-hi">no live node — the coordinator rejects the request</span>
             )}
           </dd>
         </dl>
 
         <fieldset className="mt-7">
-          <legend className="meta">Nodes · click to take one out of rotation</legend>
+          <legend className="kicker">Nodes · click to take one out of rotation</legend>
           <div className="mt-2.5 flex flex-wrap gap-2">
             {NODE_IDS.map((id) => {
               const isDown = down.has(id);
@@ -163,8 +149,8 @@ export function HashRing() {
                   onClick={() => toggle(id)}
                   className={`inline-flex items-center gap-2 rounded-[3px] border px-2.5 py-1.5 transition-colors ${
                     isDown
-                      ? "border-rule bg-paper-2 text-ink-3 line-through"
-                      : "border-rule-strong text-ink hover:border-ink"
+                      ? "border-line bg-transparent text-fg-3 line-through"
+                      : "border-line-strong bg-raised text-fg hover:border-accent"
                   }`}
                 >
                   <span
@@ -181,18 +167,18 @@ export function HashRing() {
         </fieldset>
 
         <div className="mt-7">
-          <p className="meta">Share of the key space</p>
-          <ul className="mt-2.5 space-y-1.5">
+          <p className="kicker">Share of the key space</p>
+          <ul className="mt-2.5 space-y-2">
             {NODE_IDS.map((id) => (
               <li key={id} className="grid grid-cols-[4.5rem_minmax(0,1fr)_3.75rem] items-center gap-3">
-                <span className={down.has(id) ? "text-ink-3" : "text-ink"}>{id}</span>
-                <span className="h-1.5 bg-paper-3">
+                <span className={down.has(id) ? "text-fg-3" : "text-fg"}>{id}</span>
+                <span className="h-1.5 rounded-full bg-raised">
                   <span
-                    className="block h-full transition-[width] duration-300 ease-out"
+                    className="block h-full rounded-full transition-[width] duration-300 ease-out"
                     style={{ width: `${share[id]}%`, background: nodeColor[id] }}
                   />
                 </span>
-                <span className="text-right tabular-nums text-ink-2">{share[id].toFixed(1)}%</span>
+                <span className="text-right tabular-nums text-fg-2">{share[id].toFixed(1)}%</span>
               </li>
             ))}
           </ul>

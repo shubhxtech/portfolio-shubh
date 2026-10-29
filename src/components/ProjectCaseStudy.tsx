@@ -47,20 +47,44 @@ export function ProjectCaseStudy({
 
   return (
     <article id={project.slug} aria-labelledby={`${project.slug}-title`} className="scroll-mt-20">
-      <header data-reveal>
-        <p className="meta">
-          P.{String(index).padStart(2, "0")} <span className="mx-1.5 text-rule-strong">·</span> {project.period}
-        </p>
-        <div className="mt-3 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3">
-          <h3 id={`${project.slug}-title`} className="font-serif text-[34px] leading-[1.1] tracking-[-0.02em] text-ink sm:text-[42px]">
+      <header data-reveal className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-14">
+        <div>
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[12px]">
+            <span className="rounded-[3px] border border-accent/40 bg-accent/10 px-2 py-0.5 text-accent">
+              P.{String(index).padStart(2, "0")}
+            </span>
+            <span className="text-fg-3">{project.period}</span>
+          </div>
+          <h3
+            id={`${project.slug}-title`}
+            className="mt-5 font-display text-[34px] leading-[1.05] font-medium tracking-[-0.03em] text-fg sm:text-[46px]"
+          >
             {project.title}
           </h3>
-          <ul className="flex gap-5 font-mono text-[13px]">
+          <p className="mt-5 max-w-[60ch] text-[18px] leading-[1.6] text-fg-2 sm:text-[19px]">{project.summary}</p>
+        </div>
+        <aside className="flex flex-col gap-5 lg:border-l lg:border-line lg:pl-8">
+          <div>
+            <p className="kicker mb-2.5">Stack</p>
+            <ul className="flex flex-wrap gap-1.5">
+              {project.stack.map((s) => (
+                <li key={s} className="tag">
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <ul className="font-mono text-[13px]">
             {project.links.map((l) => (
               <li key={l.href}>
-                <a href={l.href} target="_blank" rel="noopener" className="link">
+                <a
+                  href={l.href}
+                  target="_blank"
+                  rel="noopener"
+                  className="group inline-flex items-center gap-2 rounded-[3px] border border-line-strong px-3 py-2 text-fg transition-colors hover:border-accent hover:text-accent"
+                >
                   {l.label} on GitHub
-                  <span aria-hidden className="arrow arrow-ne ml-[0.3em]">
+                  <span aria-hidden className="arrow arrow-ne">
                     ↗
                   </span>
                   <span className="sr-only"> (opens in a new tab)</span>
@@ -68,24 +92,20 @@ export function ProjectCaseStudy({
               </li>
             ))}
           </ul>
-        </div>
-        <p className="mt-5 max-w-[62ch] text-[20px] leading-[1.5] text-ink-2 sm:text-[21px]">{project.summary}</p>
-        <p className="mt-5 max-w-[80ch] font-mono text-[12.5px] leading-relaxed text-ink-3">
-          {project.stack.join("  ·  ")}
-        </p>
+        </aside>
       </header>
 
       {first && <Figure n={n++} {...figures[first]}>{figures[first].render()}</Figure>}
 
-      <div data-reveal className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.45fr)] md:gap-12">
+      <div data-reveal className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] md:gap-14">
         <div>
           <Label>Problem</Label>
-          <p className="text-ink-2">{project.problem}</p>
+          <p className="text-fg-2">{project.problem}</p>
         </div>
         <div className="prose-body">
           <Label>Approach</Label>
           {project.approach.map((p) => (
-            <p key={p.slice(0, 32)} className="text-ink">
+            <p key={p.slice(0, 32)} className="text-fg">
               {p}
             </p>
           ))}
@@ -98,44 +118,49 @@ export function ProjectCaseStudy({
         </Figure>
       ))}
 
-      <div data-reveal className="grid gap-10 md:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)] md:gap-12">
+      <div data-reveal>
+        <Label>Decisions</Label>
+        <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {project.decisions.map((d, i) => (
+            <div
+              key={d.choice}
+              className="group rounded-[3px] border border-line bg-surface/80 p-4 transition-colors hover:border-line-strong"
+            >
+              <dt className="flex gap-2.5 text-[15.5px] leading-snug font-medium text-fg">
+                <span className="font-mono text-[11px] leading-[1.9] text-accent">{String(i + 1).padStart(2, "0")}</span>
+                {d.choice}
+              </dt>
+              <dd className="mt-2 pl-[26px] text-[14.5px] leading-snug text-fg-2">{d.why}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <div data-reveal className="mt-10 grid gap-10 md:grid-cols-2 md:gap-14">
         <div>
-          <Label>Decisions</Label>
-          <dl className="divide-y divide-rule border-y border-rule">
-            {project.decisions.map((d) => (
-              <div key={d.choice} className="py-3.5">
-                <dt className="text-ink">{d.choice}</dt>
-                <dd className="mt-0.5 text-[16px] leading-snug text-ink-2">{d.why}</dd>
-              </div>
+          <Label>Trade-offs</Label>
+          <ul className="space-y-3 text-[15.5px] leading-snug text-fg-2">
+            {project.tradeoffs.map((t) => (
+              <li key={t} className="flex gap-3">
+                <span aria-hidden className="mt-[0.6em] h-px w-3 shrink-0 bg-hi" />
+                {t}
+              </li>
             ))}
-          </dl>
+          </ul>
         </div>
-        <div className="space-y-10">
+        {project.next && project.next.length > 0 && (
           <div>
-            <Label>Trade-offs</Label>
-            <ul className="space-y-3 text-[16px] leading-snug text-ink-2">
-              {project.tradeoffs.map((t) => (
+            <Label>Next</Label>
+            <ul className="space-y-3 text-[15.5px] leading-snug text-fg-2">
+              {project.next.map((t) => (
                 <li key={t} className="flex gap-3">
-                  <span aria-hidden className="mt-[0.65em] h-px w-3 shrink-0 bg-signal" />
+                  <span aria-hidden className="mt-[0.6em] h-px w-3 shrink-0 bg-accent" />
                   {t}
                 </li>
               ))}
             </ul>
           </div>
-          {project.next && project.next.length > 0 && (
-            <div>
-              <Label>Next</Label>
-              <ul className="space-y-3 text-[16px] leading-snug text-ink-2">
-                {project.next.map((t) => (
-                  <li key={t} className="flex gap-3">
-                    <span aria-hidden className="mt-[0.65em] h-px w-3 shrink-0 bg-rule-strong" />
-                    {t}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </article>
   );

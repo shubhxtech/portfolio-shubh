@@ -23,7 +23,12 @@ Everything on the page comes from `src/content/`:
 | `experience.ts` | Roles, newest first. Add a new object to the top of the list. |
 | `beyond.ts` | Competitive programming profiles, hackathons and teaching, interests. |
 
-The résumé is served from `public/Shubh_Sahu_Resume.pdf`; replace the file to update it.
+The résumé is served from `public/Shubh_Sahu_Resume.pdf` and the portrait from `public/shubh-sahu.webp`; replace either file to update it (keep `site.photo` dimensions in sync).
+
+## Theme
+
+A single dark "blueprint" theme. Colours, fonts and the shared `.panel`, `.tag` and `.kicker` styles are defined in
+`src/app/globals.css`. Type is Space Grotesk (headings), Geist (body) and IBM Plex Mono (labels).
 
 ## Figures
 

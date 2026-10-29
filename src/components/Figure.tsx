@@ -2,15 +2,23 @@ import type { ReactNode } from "react";
 
 export function Figure({ n, title, caption, children }: { n: number; title: string; caption: string; children: ReactNode }) {
   return (
-    <figure data-reveal className="my-12">
-      <div className="rounded-[3px] border border-rule bg-paper px-5 py-7 sm:px-8 sm:py-9">{children}</div>
-      <figcaption className="mt-3 max-w-[72ch] text-[14.5px] leading-snug text-ink-3">
-        <span className="font-mono text-[12px] text-ink-2">Fig. {n}</span>
-        <span className="mx-2 text-rule-strong" aria-hidden>
-          /
-        </span>
-        <span className="text-ink-2">{title}.</span> {caption}
-      </figcaption>
+    <figure data-reveal className="my-14">
+      <div className="panel">
+        <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-2.5 sm:px-7">
+          <p className="kicker !text-fg-2">
+            <span className="text-accent">Fig. {n}</span>
+            <span aria-hidden className="mx-2 text-line-strong">
+              /
+            </span>
+            {title}
+          </p>
+          <span aria-hidden className="hidden font-mono text-[10.5px] text-fg-3 sm:inline">
+            {String(n).padStart(2, "0")}
+          </span>
+        </div>
+        <div className="px-5 py-7 sm:px-8 sm:py-9">{children}</div>
+      </div>
+      <figcaption className="mt-3 max-w-[78ch] text-[14px] leading-snug text-fg-3">{caption}</figcaption>
     </figure>
   );
 }

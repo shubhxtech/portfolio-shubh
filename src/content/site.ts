@@ -7,6 +7,7 @@ export const site = {
     "Shubh Sahu is a computer science student at IIT Mandi (class of 2027) who builds backend and distributed systems. Previously a software engineering intern at Google.",
   email: "shubhxtech@gmail.com",
   resume: "/Shubh_Sahu_Resume.pdf",
+  photo: { src: "/shubh-sahu.webp", width: 662, height: 740 },
   location: "Mandi, India",
   links: {
     github: "https://github.com/shubhxtech",

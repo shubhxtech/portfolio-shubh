@@ -24,9 +24,11 @@ export function CopyEmail({ email }: { email: string }) {
     <button
       type="button"
       onClick={copy}
-      className="font-mono text-[12.5px] text-ink-3 underline decoration-rule-strong underline-offset-4 transition-colors hover:text-ink hover:decoration-signal"
+      className={`rounded-[3px] border px-3 py-2 font-mono text-[12.5px] transition-colors ${
+        copied ? "border-node-2/60 text-node-2" : "border-line-strong text-fg-2 hover:border-accent hover:text-accent"
+      }`}
     >
-      <span aria-live="polite">{copied ? "Copied to clipboard" : "Copy address"}</span>
+      <span aria-live="polite">{copied ? "✓ Copied" : "Copy address"}</span>
     </button>
   );
 }

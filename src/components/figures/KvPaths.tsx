@@ -62,7 +62,7 @@ export function KvPaths() {
 
   return (
     <div>
-      <div role="tablist" aria-label="Request paths" className="flex gap-6 border-b border-rule" onKeyDown={onKeyDown}>
+      <div role="tablist" aria-label="Request paths" className="flex gap-6 border-b border-line" onKeyDown={onKeyDown}>
         {paths.map((p, i) => (
           <button
             key={p.id}
@@ -77,7 +77,7 @@ export function KvPaths() {
             tabIndex={i === active ? 0 : -1}
             onClick={() => setActive(i)}
             className={`-mb-px border-b-2 pb-2.5 font-mono text-[13px] transition-colors ${
-              i === active ? "border-ink text-ink" : "border-transparent text-ink-3 hover:text-ink"
+              i === active ? "border-accent text-fg" : "border-transparent text-fg-3 hover:text-fg"
             }`}
           >
             {p.label}
@@ -92,7 +92,11 @@ export function KvPaths() {
         key={path.id}
       >
         <Stages stages={path.stages} />
-        {path.note && <p className="meta mt-6 max-w-[60ch] leading-relaxed">{path.note}</p>}
+        {path.note && (
+          <p className="mt-7 max-w-[64ch] border-l-2 border-hi/60 pl-3 font-mono text-[12px] leading-relaxed text-fg-2">
+            {path.note}
+          </p>
+        )}
       </div>
     </div>
   );

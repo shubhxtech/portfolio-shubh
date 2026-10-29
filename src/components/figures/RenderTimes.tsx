@@ -1,13 +1,15 @@
 const MAX = 100;
 
 const rows = [
-  { label: "Before", note: "every setting change re-rendered the whole clip", from: 80, to: 100, muted: true },
-  { label: "Master", note: "once per moment: face tracking, framing, grade, voice cleanup", from: 55 },
-  { label: "Assembly", note: "each variant or edit: cuts, zooms, B-roll, music", from: 15, accent: true },
-  { label: "Text burn", note: "once, when a clip is approved", from: 20 },
-];
+  { label: "Before", note: "every setting change re-rendered the whole clip", from: 80, to: 100, tone: "muted" },
+  { label: "Master", note: "once per moment: face tracking, framing, grade, voice cleanup", from: 55, tone: "base" },
+  { label: "Assembly", note: "each variant or edit: cuts, zooms, B-roll, music", from: 15, tone: "hi" },
+  { label: "Text burn", note: "once, when a clip is approved", from: 20, tone: "base" },
+] as const;
 
 const ticks = [0, 25, 50, 75, 100];
+
+const toneClass = { muted: "bg-fg-3/70", base: "bg-accent/80", hi: "bg-hi" };
 
 export function RenderTimes() {
   return (
@@ -16,23 +18,23 @@ export function RenderTimes() {
         {rows.map((r) => (
           <li key={r.label} className="grid gap-x-6 gap-y-1.5 sm:grid-cols-[12rem_minmax(0,1fr)] sm:items-center">
             <div>
-              <p className="text-ink">
+              <p className="text-fg">
                 {r.label}{" "}
-                <span className="tabular-nums text-ink-3">
+                <span className="tabular-nums text-fg-3">
                   ~{r.from}
-                  {r.to ? `–${r.to}` : ""} s
+                  {"to" in r ? `–${r.to}` : ""} s
                 </span>
               </p>
-              <p className="font-serif text-[14px] leading-snug text-ink-3">{r.note}</p>
+              <p className="font-sans text-[13.5px] leading-snug text-fg-3">{r.note}</p>
             </div>
-            <div className="relative h-2.5 bg-paper-2" aria-hidden>
+            <div className="relative h-2.5 rounded-full bg-raised" aria-hidden>
               <span
-                className={`absolute inset-y-0 left-0 ${r.accent ? "bg-signal" : r.muted ? "bg-ink-3" : "bg-ink"}`}
+                className={`absolute inset-y-0 left-0 rounded-full ${toneClass[r.tone]}`}
                 style={{ width: `${(r.from / MAX) * 100}%` }}
               />
-              {r.to && (
+              {"to" in r && (
                 <span
-                  className="absolute inset-y-0 bg-ink-3/35"
+                  className="absolute inset-y-0 rounded-r-full bg-fg-3/30"
                   style={{ left: `${(r.from / MAX) * 100}%`, width: `${((r.to - r.from) / MAX) * 100}%` }}
                 />
               )}
@@ -42,11 +44,11 @@ export function RenderTimes() {
       </ul>
       <div className="mt-3 grid sm:grid-cols-[12rem_minmax(0,1fr)] sm:gap-x-6" aria-hidden>
         <span />
-        <div className="relative h-4 text-[11px] text-ink-3">
+        <div className="relative h-4 border-t border-dashed border-line-strong pt-1 text-[11px] text-fg-3">
           {ticks.map((t) => (
             <span
               key={t}
-              className="absolute top-0 -translate-x-1/2 first:translate-x-0 last:-translate-x-full"
+              className="absolute top-1 -translate-x-1/2 first:translate-x-0 last:-translate-x-full"
               style={{ left: `${(t / MAX) * 100}%` }}
             >
               {t}s
